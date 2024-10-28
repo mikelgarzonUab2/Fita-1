@@ -1,0 +1,6 @@
+Nil Gascón Rodríguez - 1669070
+	Ha realitzat les classes Door, DoorState, Locked, Unlock, DirectoryUserGroups, Schedule, UserGroup i User.
+Pol Farrés Ribatallada - 1669527
+	Ha realitzat les classes DirectoryAreas, Area, Partition, Sapce i tots els UMLs
+Mikel Garzón Gomes - 1671653
+	Ha realitzat les classes Clock, Temporitzador, Observable, Observer, Propped, UnlcokShortly, RequestArea i RequestReader.

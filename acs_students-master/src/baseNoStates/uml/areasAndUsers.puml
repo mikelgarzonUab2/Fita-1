@@ -1,0 +1,151 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+
+class Webserver {
+- {static} PORT :int
+- {static} FORMATTER : DateTimeFormatter
++ Webserver()
+}
+
+class SocketThread {
+- insocked : Socked
+- makeRequest(tokens : String[]) : Request
+- makeRequestReader(tokens : String[]) : RequestReader
+- makeRequestArea(tokens : String[]) : RequestArea
+- makeHeaderAnswer() : String
+- makeJsonAnswer(request : Request) : String
++ run()
+}
+
+Webserver +-right- SocketThread
+
+note right of SocketThread
+inner class
+of Webserver
+end note
+
+class DirectoryAreas {
+- {static} allDoors : Door[]
+- {static} root : Area
++ {static} makeAreas()
++ {static} findDoorById(id : String) : Door
++ {static} findAreaById(id : String) : Area
++ {static} getAllDoors() : Door[]
+}
+
+DirectoryAreas --> "*" Area : "root"
+
+class DirectoryUserGroups {
+- {static} groups : UserGroup[]
++ {static} makeUsers()
++ {static} findUserByCredential(credential : String) : User
+}
+
+DirectoryUserGroups --> "*" UserGroup : "groups"
+
+class UserGroup {
+- users : User[]
+- idGroup : String
+- areas : Area[]
+- validFrom : LocalDateTime
+- validTo : LocalDateTimee
+- startTime : LocalTime
+- endTime : LocalTime
+- validDays : DayOfWeek[]
+- allowedActions : String[]
++ Append(User u)
++ findUserByCredential(credential : String) : User
++ canBeInTheSpace(sp : space) : boolean
++ canSendRequest(now : LocalDateTime) : boolean
++ canDoAction(action: string) : boolean
++ getSpace() : Space[]
+}
+
+UserGroup --> "*" User : "users"
+UserGroup --> "*" Area : "areas"
+
+class Door {
+- id : String
+- closed : boolean
+- state : DoorStates
+- fromSpace : Space
+- toSpace : Space
++ Door(id : String)
++ processRequest(request : RequestReader)
++ setState(doorState : DoorState)
++ toJson() : JSONObject
++ toString() : String
++ isClosed() : boolean
++ setState(nouEstat : DoorStates)
++ getId() : String
++ setClosed(b : boolean)
++ getStateName() : String
+- doAction(action : String)
+}
+
+
+class User {
+- name : String
+- credential : String
+- pare : UserGroup
++ User(name: String, credential: String, pare : UserGroup)
++ toString() : String
++ getCredential() : String
++ getPare() : UserGroup
+}
+
+User --> "*" UserGroup : "pare"
+
+abstract class Area {
+# id : String
+# pare : Area
++ Area(nom : String, a : Area)
++ getId(): String
++ {abstract} findAreaById(id: String) : Area
++ {abstract} getSpaces() : Space[]
++ {abstract} getDoorsGivingAccess() : Door[]
++ {abstract} afegirFill(a : Area)
+}
+
+User --> "*" Area : "area"
+
+class Partition extends Area {
+- fills : Area[]
++ Partition(nom : String, a : Area)
++ findAreaById(id: String) : Area
++ getSpaces() : Space[]
++ getDoorsGivingAccess() : Door[]
++ afegirFill(a : Area)
+}
+
+class Space extends Area {
+- doors: Door[]
++ Space(nom : String, a : Area)
++ getId(): String
++ setDoors(doors: Door[])
++ findAreaById(id: String) : Area
++ getSpaces() : Space[]
++ getDoorsGivingAccess() : Door[]
+}
+
+Door --> "1" Space : "fromSpace"
+Door --> "1" Space : "toSpace"
+Space --> "*" Door : "Door[]"
+Partition --> "*" Area : "fills"
+
+
+class Main {
++ {static} main(args : String)
+}
+
+note right of Main::main
+DirectoryAreas.makeAreas()
+DirectoryUserGroups.makeUsers()
+new Webserver()
+end note
+
+Main -[hidden]down- Webserver
+Webserver -[hidden]down- DirectoryAreas
+DirectoryAreas -[hidden]right- DirectoryUserGroups
+@enduml

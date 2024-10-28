@@ -1,0 +1,128 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+
+class Actions {
+  + LOCK : String
+  + UNLOCK : String
+  + UNLOCK_SHORTLY : String
+  + OPEN : String
+  + CLOSE : String
+}
+
+class States {
+  + UNLOCKED : String
+  + LOCKED : String
+  + UNLOCKED_SHORTLY : String
+  + PROPPED : String
+}
+
+class Door {
+  - id : String
+  - closed : boolean
+  - state : DoorStates
+  - fromSpace : Space
+  - toSpace : Space
+  + Door(id : String)
+  + processRequest(request : RequestReader)
+  + setState(doorState : DoorState)
+  + toJson() : JSONObject
+  + toString() : String
+  + isClosed() : boolean
+  + setState(nouEstat : DoorStates)
+  + getId() : String
+  + setClosed(b : boolean)
+  + getStateName() : String
+  - doAction(action : String)
+}
+
+abstract class DoorStates extends Observer {
+  - door : Door
+  - name : String
+  - temporizador : Temporizador
+  + DoorStates(Door d)
+  + getNom() : String
+  + {abstract} open()
+  + {abstract} close()
+  + {abstract} lock()
+  + {abstract} unlock()
+  + {abstract} unlocked_shortly()
+  + update()
+}
+
+class Locked extends DoorStates {
+  + Locked(Door d)
+  + open()
+  + close()
+  + lock()
+  + unlock()
+  + unlocked_shortly()
+}
+
+class Unlock extends DoorStates {
+  + Unlock(Door d)
+  + open()
+  + close()
+  + lock()
+  + unlock()
+  + unlocked_shortly()
+}
+
+class UnlockedShortly extends DoorStates {
+  + UnlockedShortly(Door d)
+  + open()
+  + close()
+  + lock()
+  + unlock()
+  + unlocked_shortly()
+}
+
+class Propped extends DoorStates {
+  + Propped(Door d)
+  + open()
+  + close()
+  + lock()
+  + unlock()
+  + unlocked_shortly()
+}
+
+class Observable {
+  + attach(observer : Observer)
+  + detach(observer : Observer)
+  + notifyObservers()
+}
+
+class Observer {
+  - seconds : int
+  + update()
+}
+
+class Clock {
+  - date : LocalDateTime
+  - timer : Timer
+  - period : int
+  + Clock(int period)
+  + start(observer : Observable)
+  + stop()
+  + getPeriod() : int
+  + getDate() : LocalDateTime
+}
+
+class Temporizador implements Observable {
+  - clock : Clock
+  - observer : Observer[]
+  + Temporizador(Observer observer)
+  + tick()
+  + attach(observer : Observer)
+  + detach(observer : Observer)
+  + notifyObservers()
+}
+
+
+
+Door --> DoorStates : "state"
+
+Temporizador --> Clock : "clock"
+Temporizador --> Observer : "observer"
+
+@enduml

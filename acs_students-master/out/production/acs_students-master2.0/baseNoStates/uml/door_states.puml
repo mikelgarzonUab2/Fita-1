@@ -1,0 +1,44 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Actions{
++ {static} LOCK : String
++ {static} UNLOCK : String
++ {static} OPEN : String
++ {static} CLOSE : String
++ {static} UNLOCK_SHORTLY : String
+}
+
+class DoorStates {
+# door : Door
+# name : String
++ DoorStates(door : Door)
++ getNom() : String
++ {abstract} open()
++ {abstract} close()
++ {abstract} lock()
++ {abstract} unlock()
+}
+
+class Locked extends DoorStates {
++ Locked(door : Door)
++ open()
++ close()
++ lock()
++ unlock()
+}
+
+class Unlock extends DoorStates {
++ Unlock(door : Door)
++ open()
++ close()
++ lock()
++ unlock()
+}
+
+class States {
++ {static} UNLOCKED : String
++ {static} LOCKED : String
+}
+
+@enduml
